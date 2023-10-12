@@ -1,0 +1,20 @@
+[project]
+name = "envclass"
+version = "0.1.0"
+description = "Python class to simplify environmental variable management in your applications, avoiding code repetition."
+authors = [
+    {name = "brunodavi",email = "brunodaviandrade2000@gmail.com"},
+]
+
+dependencies = [
+    "python-dotenv>=1.0.0",
+]
+
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "GNU"}
+
+
+[tool.pdm.scripts]
+start = 'pdm run ./src/envclass/envclass.py'
+test = 'python -m unittest'
