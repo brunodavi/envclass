@@ -89,7 +89,7 @@ class EnvClass:
     def parse_attrib(
             self,
             label: str,
-            attrib: type,
+            attrib: object,
             default=None
         ):
         default_exists = default is not None
