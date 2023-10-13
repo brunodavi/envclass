@@ -45,7 +45,7 @@ my_env.testing
 my_env.port
 ```
 
-### Tipos de Atributos
+## Tipos de Atributos
 Atualmente, os tipos primitivos dos atributos são: `str`, `int`, `bool` e `float`.
 
 > Outros tipos podem funcionar também, mas não foram testados.
