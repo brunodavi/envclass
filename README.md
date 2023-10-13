@@ -2,6 +2,8 @@
 
 [:us:](docs/README-EN.md)
 
+[![CI][test-badge]][ci]
+
 O `EnvClass` é uma classe Python projetada para simplificar o gerenciamento de variáveis de ambiente em seus aplicativos, reduzindo a repetição de código. O `EnvClass` utiliza a biblioteca `python-dotenv` por padrão, incorporando a função `load_dotenv`, de forma que cada nova instância de uma classe que herda de `EnvClass` executa essa ação automaticamente.
 
 ## Instalação
@@ -227,3 +229,6 @@ env = Env()
 # >>> getenv('api_key')
 env.api_key
 ```
+
+[test-badge]: https://github.com/brunodavi/envclass/actions/workflows/python-test.yml/badge.svg
+[ci]: https://github.com/brunodavi/envclass/actions/workflows/python-test.yml
