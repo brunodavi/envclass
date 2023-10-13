@@ -5,52 +5,128 @@ from unittest.mock import patch
 
 from envclass import EnvClass
 
-env = {
-    'STR0': 'env_test',
 
-    'INT1': '0',
-    'INT2': '-1',
-    'INT3': '2',
-    'INT3': '134',
+class TestEnvClassFeatures(TestCase):
+    @patch.dict(environ, {'DB_CONNECTION': 'ok'})
+    def test_attribute_prefix(self):
+        class DataBase(EnvClass):
+            _prefix = 'DB'
 
-    'FLOAT1': '2.0',
-    'FLOAT2': '0',
-    'FLOAT3': '.4',
-    'FLOAT4': '134.60',
+            connection: str
 
-    'BOOL1': 'False',
-    'BOOL2': 'false',
-    'BOOL3': '0',
-    'BOOL4': '1',
-}
+        db = DataBase()
+        self.assertEqual(db.connection, 'ok')
+
+    @patch.dict(environ, {'DB__KEY': '123'})
+    def test_attribute_joiner(self):
+        class DataBase(EnvClass):
+            _prefix = 'DB'
+            _joiner = '__'
+
+            key: str
+
+        db = DataBase()
+        self.assertEqual(db.key, '123')
+
+    @patch.dict(environ, {'SERVICE_API_KEY': 'token'})
+    def test_attribute_class_prefix(self):
+        class ServiceApi(EnvClass):
+            _class_as_prefix = True
+
+            key: str
+
+        api = ServiceApi()
+        self.assertEqual(api.key, 'token')
+
+    @patch.dict(environ, {'SERVICE_API_ADMIN': 'False'})
+    def test_prefix_collision(self):
+        class CloudService(EnvClass):
+            _class_as_prefix = True
+            _prefix = 'SERVICE_API'
+
+            admin: bool
+
+        api = CloudService()
+        self.assertEqual(api.admin, False)
 
 
-class TestEnvClass(TestCase):
-    @patch.dict(environ, env)
+    def test_attribute_strict_false(self):
+        class MyEnv(EnvClass):
+            _strict = False
+
+            attribute_not_exists: bool
+
+        my_env = MyEnv()
+        self.assertEqual(my_env.attribute_not_exists, None)
+
+    def test_attribute_strict_true(self):
+        class MyEnv(EnvClass):
+            attribute_not_exists: bool
+
+        with self.assertRaises(KeyError):
+            MyEnv()
+
+
     def test_attribute_default(self):
         class MyEnv(EnvClass):
-            default: str = 'env_test' 
-            str0: str 
+            default_str: str = 'env_test' 
+            default_int: int = 1 
+            default_float: float = 1.5 
+            default_bool: bool = True
 
         my_env = MyEnv(env_file='.env')
 
-        self.assertEqual(my_env.str0, 'env_test')
-        self.assertEqual(my_env.default, 'env_test')
+        self.assertEqual(my_env.default_str, 'env_test')
+        self.assertEqual(my_env.default_int, 1)
+        self.assertEqual(my_env.default_float, 1.5)
+        self.assertEqual(my_env.default_bool, True)
 
 
-    @patch.dict(environ, env)
+class TestEnvClassTypes(TestCase):
+    def setUp(self):
+        env = {
+            'STR0': '',
+            'STR1': 'env_test',
+
+            'INT0': '',
+            'INT1': '0',
+            'INT2': '-1',
+            'INT3': '2',
+            'INT4': '134',
+
+            'FLOAT0': '',
+            'FLOAT1': '2.0',
+            'FLOAT2': '0',
+            'FLOAT3': '.4',
+            'FLOAT4': '134.60',
+
+            'BOOL0': '',
+            'BOOL1': 'False',
+            'BOOL2': 'True',
+            'BOOL3': '0',
+            'BOOL4': '1',
+        }
+
+        self.patcher = patch.dict(environ, env)
+        self.patcher.start()
+
+    def tearDown(self):
+        self.patcher.stop()
+
+
     def test_attribute_str(self):
         class MyEnv(EnvClass):
             str0: str
+            str1: str
 
         my_env = MyEnv(env_file='.env')
 
-        self.assertEqual(my_env.str0, 'env_test')
+        self.assertEqual(my_env.str0, None)
+        self.assertEqual(my_env.str1, 'env_test')
 
-
-    @patch.dict(environ, env)
     def test_attribute_int(self):
         class MyEnv(EnvClass):
+            int0: int 
             int1: int 
             int2: int 
             int3: int 
@@ -58,22 +134,40 @@ class TestEnvClass(TestCase):
 
         my_env = MyEnv(env_file='.env')
 
+        self.assertEqual(my_env.int0, None)
         self.assertEqual(my_env.int1, 0)
         self.assertEqual(my_env.int2, -1)
         self.assertEqual(my_env.int3, 2)
         self.assertEqual(my_env.int4, 134)
 
-    @patch.dict(environ, env)
-    def test_attribute_bool(self):
+    def test_attribute_float(self):
         class MyEnv(EnvClass):
-            bool1: int 
-            bool2: int 
-            bool3: int 
-            bool4: int 
+            float0: float 
+            float1: float 
+            float2: float 
+            float3: float 
+            float4: float 
 
         my_env = MyEnv(env_file='.env')
 
+        self.assertEqual(my_env.float0, None)
+        self.assertEqual(my_env.float1, 2.0)
+        self.assertEqual(my_env.float2, 0)
+        self.assertEqual(my_env.float3, .4)
+        self.assertEqual(my_env.float4, 134.60)
+
+    def test_attribute_bool(self):
+        class MyEnv(EnvClass):
+            bool0: bool
+            bool1: bool
+            bool2: bool 
+            bool3: bool 
+            bool4: bool 
+
+        my_env = MyEnv(env_file='.env')
+
+        self.assertEqual(my_env.bool0, None)
         self.assertEqual(my_env.bool1, False)
-        self.assertEqual(my_env.bool2, False)
+        self.assertEqual(my_env.bool2, True)
         self.assertEqual(my_env.bool3, False)
         self.assertEqual(my_env.bool4, True)
