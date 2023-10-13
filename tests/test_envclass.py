@@ -1,13 +1,15 @@
-from os import environ
+import os
 
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import Mock, patch
+
+from tempfile import NamedTemporaryFile
 
 from envclass import EnvClass
 
 
 class TestEnvClassFeatures(TestCase):
-    @patch.dict(environ, {'DB_CONNECTION': 'ok'})
+    @patch.dict(os.environ, {'DB_CONNECTION': 'ok'})
     def test_attribute_prefix(self):
         class DataBase(EnvClass):
             _prefix = 'DB'
@@ -17,7 +19,7 @@ class TestEnvClassFeatures(TestCase):
         db = DataBase()
         self.assertEqual(db.connection, 'ok')
 
-    @patch.dict(environ, {'DB__KEY': '123'})
+    @patch.dict(os.environ, {'DB__KEY': '123'})
     def test_attribute_joiner(self):
         class DataBase(EnvClass):
             _prefix = 'DB'
@@ -28,7 +30,7 @@ class TestEnvClassFeatures(TestCase):
         db = DataBase()
         self.assertEqual(db.key, '123')
 
-    @patch.dict(environ, {'SERVICE_API_KEY': 'token'})
+    @patch.dict(os.environ, {'SERVICE_API_KEY': 'token'})
     def test_attribute_class_prefix(self):
         class ServiceApi(EnvClass):
             _class_as_prefix = True
@@ -38,7 +40,7 @@ class TestEnvClassFeatures(TestCase):
         api = ServiceApi()
         self.assertEqual(api.key, 'token')
 
-    @patch.dict(environ, {'SERVICE_API_ADMIN': 'False'})
+    @patch.dict(os.environ, {'SERVICE_API_ADMIN': 'False'})
     def test_prefix_collision(self):
         class CloudService(EnvClass):
             _class_as_prefix = True
@@ -49,6 +51,46 @@ class TestEnvClassFeatures(TestCase):
         api = CloudService()
         self.assertEqual(api.admin, False)
 
+
+    def test_load_env(self):
+        class LoadEnv(EnvClass):
+            testing: bool
+
+            host: str
+            port: int
+
+            none: None
+
+        with NamedTemporaryFile(delete=False) as tmp:
+            env_content = '\n'.join((
+                'TESTING=true',
+                '',
+                '# 1 + 1 = 2',
+                'HOST=localhost',
+                'PORT=1234',
+                'NONE='
+            )).encode()
+
+            tmp.write(env_content)
+
+        load_env = LoadEnv(tmp.name)
+
+        self.assertEqual(load_env.testing, True)
+        self.assertEqual(load_env.host, 'localhost')
+        self.assertEqual(load_env.port, 1234)
+        self.assertEqual(load_env.none, None)
+
+        os.remove(tmp.name)
+
+    @patch('envclass.EnvClass.parse_env')
+    def test_load_env_false(self, mock_open: Mock):
+        class LoadEnvFalse(EnvClass):
+            _load_env = False
+
+            key: str = '123'
+
+        LoadEnvFalse()
+        mock_open.assert_not_called()
 
     def test_attribute_strict_false(self):
         class MyEnv(EnvClass):
@@ -107,7 +149,7 @@ class TestEnvClassTypes(TestCase):
             'BOOL4': '1',
         }
 
-        self.patcher = patch.dict(environ, env)
+        self.patcher = patch.dict(os.environ, env)
         self.patcher.start()
 
     def tearDown(self):
