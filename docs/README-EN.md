@@ -1,5 +1,5 @@
 # EnvClass
-[:br:](/README.md)
+[🇧🇷](/README.md)
 
 > Translated by ChatGPT
 
