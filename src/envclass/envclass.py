@@ -54,6 +54,15 @@ class EnvClass:
 
         return environ.get(label)
 
+    def _get_attribute(self):
+        default = getattr(self, self._label, None)
+
+        return self.parse_attrib(
+            self._label,
+            self._attrib,
+            default,
+        )
+
 
     def parse_label(self, label: str):
         prefix = ''
@@ -107,13 +116,4 @@ class EnvClass:
 
         return default
 
-    def get_attribute(self):
-        default = getattr(self, self._label, None)
-
-        return self.parse_attrib(
-            self._label,
-            self._attrib,
-            default,
-        )
-
-    _read_only_atributte = property(get_attribute)
+    _read_only_atributte = property(_get_attribute)
