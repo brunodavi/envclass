@@ -1,6 +1,4 @@
-import os
-
-from re import findall
+import os, re
 
 
 class EnvClass:
@@ -55,12 +53,17 @@ class EnvClass:
     def parse_env(self, env_file: str):
         if os.path.isfile(env_file):
             with open(env_file, encoding='utf-8') as stream:
-                for line in stream:
-                    try:
-                        [(name, value)] = findall(r'^([A-Za-z]\w+)=(\w*)', line)
-                        os.environ[name] = value
-                    except ValueError:
-                        continue
+                env_content = stream.read()
+                env_list = re.findall(
+                    r'^([A-Za-z]\w+)=(\w*)',
+                    env_content,
+                    re.MULTILINE,
+                )
+
+                for name, value in env_list:
+                    print(name, '=', value)
+                    os.environ[name] = value
+
                 return True
         return False
 
