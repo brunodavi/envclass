@@ -61,11 +61,7 @@ class EnvClass:
                 )
 
                 for name, value in env_list:
-                    print(name, '=', value)
                     os.environ[name] = value
-
-                return True
-        return False
 
     def parse_label(self, label: str):
         prefix = ''
@@ -75,7 +71,7 @@ class EnvClass:
         if self._class_as_prefix:
             cls_name = type(self).__name__
 
-            words = findall(r'[A-Z][a-z-0-9]+', cls_name)
+            words = re.findall(r'[A-Z][a-z-0-9]+', cls_name)
 
             if len(words) > 1:
                 prefix = joiner.join(words).upper()
