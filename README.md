@@ -1,5 +1,6 @@
 # EnvClass
 
+[🇧🇷](/)
 [🇺🇲](docs/README-EN.md)
 
 Uma classe Python que simplifica o gerenciamento de variáveis de ambiente em seus aplicativos, eliminando a necessidade de repetir código.
