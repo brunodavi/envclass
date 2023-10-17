@@ -1,8 +1,6 @@
-import re
-from typing import IO
+import os
 
-from os import environ
-from dotenv import load_dotenv
+from re import findall
 
 
 class EnvClass:
@@ -12,25 +10,16 @@ class EnvClass:
     _prefix = None
     _joiner = '_'
 
+    _load_env = True
+
 
     def __init__(
             self,
-            env_file: str | None = None,
-            stream: IO[str] | None = None,
-            verbose: bool = False,
-            override: bool = False,
-            interpolate: bool = True,
-            encoding: str | None = "utf-8"
+            env_file: str = '.env',
         ):
 
-        load_dotenv(
-            env_file,
-            stream,
-            verbose,
-            override,
-            interpolate,
-            encoding
-        )
+        if self._load_env:
+            self.parse_env(env_file)
 
         self._init_attrs()
 
@@ -45,14 +34,14 @@ class EnvClass:
             setattr(
                 self,
                 label,
-                self._read_only_atributte
+                self._read_only_attribute
             )
 
     def _get_env(self, label: str, default_exists: bool):
         if not default_exists and self._strict:
-            return environ[label]
+            return os.environ[label]
 
-        return environ.get(label)
+        return os.environ.get(label)
 
     def _get_attribute(self):
         default = getattr(self, self._label, None)
@@ -63,6 +52,17 @@ class EnvClass:
             default,
         )
 
+    def parse_env(self, env_file: str):
+        if os.path.isfile(env_file):
+            with open(env_file, encoding='utf-8') as stream:
+                for line in stream:
+                    try:
+                        [(name, value)] = findall(r'^([A-Za-z]\w+)=(\w*)', line)
+                        os.environ[name] = value
+                    except ValueError:
+                        continue
+                return True
+        return False
 
     def parse_label(self, label: str):
         prefix = ''
@@ -72,7 +72,7 @@ class EnvClass:
         if self._class_as_prefix:
             cls_name = type(self).__name__
 
-            words = re.findall(r'[A-Z][a-z-0-9]+', cls_name)
+            words = findall(r'[A-Z][a-z-0-9]+', cls_name)
 
             if len(words) > 1:
                 prefix = joiner.join(words).upper()
@@ -116,4 +116,4 @@ class EnvClass:
 
         return default
 
-    _read_only_atributte = property(_get_attribute)
+    _read_only_attribute = property(_get_attribute)
