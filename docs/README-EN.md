@@ -1,12 +1,14 @@
 # EnvClass
-[🇧🇷](/README.md)
 
-> Translated by ChatGPT
+[🇧🇷](/)
+[🇺🇲](docs/README-EN.md)
 
-`EnvClass` is a Python class designed to simplify the management of environment variables in your applications, reducing code repetition. By default, `EnvClass` uses the `python-dotenv` library and incorporates the `load_dotenv` function, so every new instance of a class that inherits from `EnvClass` automatically executes this action.
+A Python class that simplifies the management of environment variables in your applications, eliminating the need for code repetition.
+
+This class does not require any external libraries to function.
 
 ## Installation
-You can install `EnvClass` using pip with the following command:
+To install, use pip:
 
 ```bash
 pip install envclass
@@ -32,78 +34,117 @@ class MyEnv(EnvClass):
 # Arguments are optional
 my_env = MyEnv(env_file='.env')
 
-# Accessing environment variables as attributes
+# Example usage:
 # >>> os.environ['DB_USER']
 my_env.db_user
 
 # >>> os.environ.get('DB_NAME', 'Dev')
 my_env.db_host
 
-# >>> True
+# Returns True
 my_env.testing
 
-# >>> 8080
+# Returns 8080
 my_env.port
 ```
 
-## Attribute Types
-Currently, the primitive types of attributes are: `str`, `int`, `bool`, and `float`.
+### Supported Types
+Currently, only primitive types have been tested, such as:
 
-> Other types may also work, but have not been tested.
+- str
+- int
+- bool
+- float
 
-Attributes are automatically converted as they obtain values from environment variables.
+Every time you instantiate a class that inherits from `EnvClass`, it reads and defines environment variables from the `.env` file.
 
-`.env`
+Example `.env` file:
+
 ```
 DEBUG=True
 SECRET_KEY=mysecretkey
 PORT=8080
-DB_HOST=localhost DB_USER=username DB_PASSWORD=password
+DB_HOST=localhost
+DB_USER=username
+DB_PASSWORD=password
 
 NONE_ENV=
 ```
 
-When environment variables are created without a value (i.e., read from `os.environ` as empty strings `''`), attributes are set to `None`, regardless of their type. `bool` attributes can be configured as:
+When environment variables are created without a value, meaning they are read in `os.environ` but are empty strings `''`, they are treated as `None`, regardless of their type.
+
+Attributes follow Python language conventions for conversion, but `bool` attributes have specific interpretations when reading environment variables:
+
+`bool` attributes can be:
 
 - `True`, `true`, or `1` for true.
 - `False`, `false`, or `0` for false.
 
 ## Special Attributes
 
+### Load Env
+By default, this is set to `True`.
+
+This allows reading the `.env` file and defining environment variables when instantiating the class. If set to `False`, the `.env` file will not be read, and environment variables will not be defined, requiring manual definition of environment variables during program execution.
+
+Example:
+
+```python
+# no_load_env.py
+from envclass import EnvClass
+
+class NoLoadEnv(EnvClass):
+    _load_env = False
+    wait_time: int = 10
+
+env = NoLoadEnv()
+
+# Returns 5
+env.wait_time
+```
+
+Execution on Linux:
+
+```bash
+WAIT_TIME=5 python no_load_env.py
+```
+
 ### Strict Mode
-By default, strict mode is enabled (`_strict = True`).
+By default, this is set to `True`.
 
-When enabled, attempting to access a nonexistent environment variable will result in a `KeyError`.
+This allows using `environ[key]` to signal when an environment variable is not defined, generating the default `KeyError` error if the variable does not have a default value. If set to `False`, attributes that do not exist will return `None`.
 
-When disabled (`_strict = False`), nonexistent attributes return `None`.
+Examples:
 
-#### Examples
 ```python
 from envclass import EnvClass
 
-class Ex(EnvClass):
+# Disabled strict mode
+class NotStrict(EnvClass):
     _strict = False
     not_exists: str
 
-ex = Ex()
+not_strict = NotStrict()
 
-# Returns None instead of raising a KeyError
-ex.not_exists
+# Returns None
+not_strict.not_exists
 
+# Enabled strict mode
 class Strict(EnvClass):
     _strict = True
     not_exists: str
 
-# Raises a KeyError when the environment variable does not exist
+# Generates a KeyError
 strict_env = Strict()
 ```
 
 ### Prefix
-By default, the prefix is `None`.
+By default, there is no prefix defined.
 
-You can add a string to the beginning of the environment variable name using the `_prefix` attribute.
+This allows adding a string at the beginning of the environment variable name, making it easier to organize.
 
-#### Examples
+Example:
+
 ```python
 from envclass import EnvClass
 
@@ -117,16 +158,17 @@ class DataBase(EnvClass):
 
 db = DataBase()
 
-# Example: os.environ.get('DB_NAME', 'Dev')
+# >>> os.environ.get('DB_NAME', 'Dev')
 db.name
 ```
 
-### Separator
-By default, the separator is the `_` (underscore) character.
+### Join
+By default, the `_` character is used to separate words when using prefixes.
 
-Use the `_joiner` attribute to set a different character that separates words when using prefixes.
+This allows inserting a custom character to separate words when using prefixes.
 
-#### Examples
+Example:
+
 ```python
 from envclass import EnvClass
 
@@ -143,14 +185,17 @@ env.key
 ```
 
 ### Class as Prefix
-By default, the use of the class name as a prefix is disabled (`_class_as_prefix = False`). When enabled, the class name is used at the beginning of the environment variable name, especially useful if you follow the `PascalCase` convention for naming your classes.
+By default, this is set to `False`.
+
+This allows using the class name as part of the environment variable name. Currently, it only separates classes in `PascalCase`, so if you use it differently, the result may not be satisfactory.
+
+Example:
 
 ```python
 from envclass import EnvClass
 
 class ApiService(EnvClass):
     _class_as_prefix = True
-
     key: str
 
 api = ApiService()
@@ -159,15 +204,17 @@ api = ApiService()
 api.key
 ```
 
-### Notes
-- If you use `_prefix` in conjunction with `_class_as_prefix`, the `_prefix` takes precedence and is used at the beginning of the environment variable name.
+> **Note:**
+> If you use both `_prefix` and `_class_as_prefix`, the `_prefix` will be used.
 
 ## Modifying EnvClass
-If you want to modify certain functionalities in `EnvClass`, such as setting different defaults, manipulating information, and other customizations, you can create a new class that inherits from `EnvClass` and make the necessary changes.
+If you want to modify some functionalities in `EnvClass`, such as setting different defaults or manipulating information, you can do so:
 
-### Examples
+### Defaults
+You can create a new class that inherits from `EnvClass` and change its defaults.
 
-#### Defaults
+Example:
+
 ```python
 from envclass import EnvClass
 
@@ -183,17 +230,19 @@ cloud = Cloud()
 cloud.api_key
 ```
 
-#### Names
-The `parse_label` method uses special prefix attributes, so if you change it, they may no longer work.
+### Names
+The `parse_label` method uses the special prefix attributes, so if you change it, they may stop working.
+
+Example:
 
 ```python
 from envclass import EnvClass
 
 class ReverseEnv(EnvClass):
     def parse_label(self, label: str):
-    return '_'.join(
-        label.split('_')[::-1]
-    ).upper()
+        return '_'.join(
+            label.split('_')[::-1]
+        ).upper()
 
 class Api(ReverseEnv):
     api_key: str
@@ -204,8 +253,10 @@ api = Api()
 api.api_key
 ```
 
-#### Attributes
-The `parse_label` method is used in `parse_attrib`, so it won't be called if you override this method.
+### Attributes
+The `parse_label` method is used in `parse_attrib`, so it will not be called if you override it.
+
+Example:
 
 ```python
 from envclass import EnvClass
@@ -227,4 +278,27 @@ env = Env()
 
 # >>> getenv('api_key')
 env.api_key
+```
+
+### Reading
+The `parse_env` method reads the `.env` file and defines the variables with `os.environ`. If you prefer, you can use a library like `python-dotenv` to perform this action.
+
+Example:
+
+```python
+from dotenv import load_env
+from envclass import EnvClass
+
+class DotClass(EnvClass):
+    def parse_env(self, env_file: str):
+        load_env(env_file)
+
+class Service(DotClass):
+    host: str = 'localhost'
+
+# By default, it runs the parse_env
+service = Service()
+
+# >>> os.environ.get('HOST', 'localhost')
+service.host
 ```
