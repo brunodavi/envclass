@@ -9,6 +9,19 @@ from envclass import EnvClass
 
 
 class TestEnvClassFeatures(TestCase):
+    @patch.dict(os.environ, {'A': '1', 'B': '2', 'C': '3'})
+    def test_attribute_1_letter(self):
+        class OneLetter(EnvClass):
+            a: int = 1
+            b: int = 2
+            c: int = 3
+
+        one_letter = OneLetter()
+
+        self.assertEqual(one_letter.a, 1)
+        self.assertEqual(one_letter.b, 2)
+        self.assertEqual(one_letter.c, 3)
+
     @patch.dict(os.environ, {'DB_CONNECTION': 'ok'})
     def test_attribute_prefix(self):
         class DataBase(EnvClass):
