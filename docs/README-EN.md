@@ -3,6 +3,11 @@
 [🇧🇷](/)
 [🇺🇲](docs/README-EN.md)
 
+[ ![python_versions][BadgePyVersions] ][PYPI]
+[ ![gnu][BadgeGNU] ][PYPI]
+[ ![version][BadgeVersion] ][PYPI]
+[ ![testing][BadgeTest] ][CI]
+
 A Python class that simplifies the management of environment variables in your applications, eliminating the need for code repetition.
 
 This class does not require any external libraries to function.
@@ -302,3 +307,12 @@ service = Service()
 # >>> os.environ.get('HOST', 'localhost')
 service.host
 ```
+
+
+[PYPI]: https://pypi.python.org/pypi/envclass
+[CI]: https://github.com/brunodavi/envclass/actions/workflows/python-test.yml
+
+[BadgeGNU]: https://img.shields.io/pypi/l/envclass.svg
+[BadgeVersion]: https://img.shields.io/pypi/v/envclass.svg
+[BadgePyVersions]: https://img.shields.io/pypi/pyversions/envclass.svg
+[BadgeTest]: https://github.com/brunodavi/envclass/actions/workflows/python-test.yml/badge.svg
