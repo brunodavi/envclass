@@ -50,3 +50,5 @@ Issues = "https://github.com/brunodavi/envclass/issues"
 [tool.pdm.scripts]
 start = "pdm run ./src/envclass/envclass.py"
 test = "python -m unittest"
+
+publish = "pdm publish --username __token__ --password $PYPI_ENVCLASS_KEY"
