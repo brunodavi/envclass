@@ -1,26 +1,22 @@
 # EnvClass
 
-[🇧🇷](/)
-[🇺🇲](docs/README-EN.md)
+[![python_versions][BadgePyVersions]][PYPI]
+[![gnu][BadgeGNU]][PYPI]
+[![version][BadgeVersion]][PYPI]
+[![testing][BadgeTest]][CI]
 
-[ ![python_versions][BadgePyVersions] ][PYPI]
-[ ![gnu][BadgeGNU] ][PYPI]
-[ ![version][BadgeVersion] ][PYPI]
-[ ![testing][BadgeTest] ][CI]
+A Python class that simplifies the management of environment variables in your applications, eliminating the need for code repetition.
 
+This class does not require any external libraries to function.
 
-Uma classe Python que simplifica o gerenciamento de variáveis de ambiente em seus aplicativos, eliminando a necessidade de repetir código.
-
-Esta classe não requer nenhuma biblioteca externa para funcionar.
-
-## Instalação
-Para instalar, utilize o pip:
+## Installation
+To install, use pip:
 
 ```bash
 pip install envclass
 ```
 
-## Início Rápido
+## Quick Start
 ```python
 from envclass import EnvClass
 
@@ -37,34 +33,34 @@ class MyEnv(EnvClass):
     db_user: str
     db_password: str
 
-# Os argumentos são opcionais
+# Arguments are optional
 my_env = MyEnv(env_file='.env')
 
-# Exemplo de uso:
+# Example usage:
 # >>> os.environ['DB_USER']
 my_env.db_user
 
 # >>> os.environ.get('DB_NAME', 'Dev')
 my_env.db_host
 
-# Retorna True
+# Returns True
 my_env.testing
 
-# Retorna 8080
+# Returns 8080
 my_env.port
 ```
 
-### Tipos Suportados
-Atualmente, apenas os tipos primitivos foram testados, como:
+### Supported Types
+Currently, only primitive types have been tested, such as:
 
 - str
 - int
 - bool
 - float
 
-Toda vez que você instancia uma classe que herda de `EnvClass`, ela realiza a leitura e definição das variáveis de ambiente a partir do arquivo `.env`.
+Every time you instantiate a class that inherits from `EnvClass`, it reads and defines environment variables from the `.env` file.
 
-Exemplo de arquivo `.env`:
+Example `.env` file:
 
 ```
 DEBUG=True
@@ -77,23 +73,23 @@ DB_PASSWORD=password
 NONE_ENV=
 ```
 
-Quando as variáveis de ambiente são criadas sem valor, ou seja, são lidas em `os.environ`, mas são strings vazias `''`, elas são tratadas como `None`, independentemente do tipo.
+When environment variables are created without a value, meaning they are read in `os.environ` but are empty strings `''`, they are treated as `None`, regardless of their type.
 
-Os atributos seguem as convenções da linguagem Python para conversão, mas os atributos do tipo `bool` têm interpretações específicas ao ler as variáveis de ambiente:
+Attributes follow Python language conventions for conversion, but `bool` attributes have specific interpretations when reading environment variables:
 
-Os atributos `bool` podem ser:
+`bool` attributes can be:
 
-- `True`, `true` ou `1` para verdadeiro.
-- `False`, `false` ou `0` para falso.
+- `True`, `true`, or `1` for true.
+- `False`, `false`, or `0` for false.
 
-## Atributos Especiais
+## Special Attributes
 
-### Carregar Env
-Por padrão, está definido como `True`.
+### Load Env
+By default, this is set to `True`.
 
-Isso permite ler o arquivo `.env` e definir as variáveis de ambiente ao instanciar a classe. Se definido como `False`, o arquivo `.env` não será lido e as variáveis de ambiente não serão definidas, tornando necessário definir as variáveis de ambiente manualmente durante a execução do programa.
+This allows reading the `.env` file and defining environment variables when instantiating the class. If set to `False`, the `.env` file will not be read, and environment variables will not be defined, requiring manual definition of environment variables during program execution.
 
-Exemplo:
+Example:
 
 ```python
 # no_load_env.py
@@ -105,51 +101,51 @@ class NoLoadEnv(EnvClass):
 
 env = NoLoadEnv()
 
-# Retorna 5
+# Returns 5
 env.wait_time
 ```
 
-Execução do comando no Linux:
+Execution on Linux:
 
 ```bash
 WAIT_TIME=5 python no_load_env.py
 ```
 
-### Modo Estrito
-Por padrão, está definido como `True`.
+### Strict Mode
+By default, this is set to `True`.
 
-Isso permite usar `environ[key]` para sinalizar quando uma variável de ambiente não foi definida, gerando o erro padrão `KeyError` se a variável não tiver um valor padrão. Se definido como `False`, os atributos que não existem retornarão `None`.
+This allows using `environ[key]` to signal when an environment variable is not defined, generating the default `KeyError` error if the variable does not have a default value. If set to `False`, attributes that do not exist will return `None`.
 
-Exemplos:
+Examples:
 
 ```python
 from envclass import EnvClass
 
-# Modo Estrito desativado
+# Disabled strict mode
 class NotStrict(EnvClass):
     _strict = False
     not_exists: str
 
 not_strict = NotStrict()
 
-# Retorna None
+# Returns None
 not_strict.not_exists
 
-# Modo Estrito ativado
+# Enabled strict mode
 class Strict(EnvClass):
     _strict = True
     not_exists: str
 
-# Gera um KeyError
+# Generates a KeyError
 strict_env = Strict()
 ```
 
-### Prefixo
-Por padrão, não possui um prefixo definido.
+### Prefix
+By default, there is no prefix defined.
 
-Isso permite adicionar uma string no início do nome da variável de ambiente, facilitando a organização.
+This allows adding a string at the beginning of the environment variable name, making it easier to organize.
 
-Exemplo:
+Example:
 
 ```python
 from envclass import EnvClass
@@ -168,12 +164,12 @@ db = DataBase()
 db.name
 ```
 
-### Juntar
-Por padrão, o caractere `_` é usado para separar as palavras ao usar os prefixos.
+### Join
+By default, the `_` character is used to separate words when using prefixes.
 
-Isso permite inserir um caractere personalizado para separar as palavras ao usar os prefixos.
+This allows inserting a custom character to separate words when using prefixes.
 
-Exemplo:
+Example:
 
 ```python
 from envclass import EnvClass
@@ -190,12 +186,12 @@ env = Env()
 env.key
 ```
 
-### Classe Como Prefixo
-Por padrão, está definido como `False`.
+### Class as Prefix
+By default, this is set to `False`.
 
-Isso permite usar o nome da classe como parte do nome da variável de ambiente. Atualmente, ele separa apenas classes em `PascalCase`, portanto, se você usar de outra forma, o resultado pode não ser satisfatório.
+This allows using the class name as part of the environment variable name. Currently, it only separates classes in `PascalCase`, so if you use it differently, the result may not be satisfactory.
 
-Exemplo:
+Example:
 
 ```python
 from envclass import EnvClass
@@ -210,16 +206,16 @@ api = ApiService()
 api.key
 ```
 
-> **Observação:**
-> Se você usar `_prefix` e `_class_as_prefix` juntos, o `_prefix` será o utilizado.
+> **Note:**
+> If you use both `_prefix` and `_class_as_prefix`, the `_prefix` will be used.
 
-## Modificando EnvClass
-Se você deseja modificar algumas funcionalidades no `EnvClass`, como definir padrões diferentes ou manipular informações, é possível fazer isso:
+## Modifying EnvClass
+If you want to modify some functionalities in `EnvClass`, such as setting different defaults or manipulating information, you can do so:
 
-### Padrões
-Você pode criar uma nova classe que herde de `EnvClass` e alterar seus padrões.
+### Defaults
+You can create a new class that inherits from `EnvClass` and change its defaults.
 
-Exemplo:
+Example:
 
 ```python
 from envclass import EnvClass
@@ -236,10 +232,10 @@ cloud = Cloud()
 cloud.api_key
 ```
 
-### Nomes
-O método `parse_label` usa os atributos especiais de prefixo, portanto, se você alterá-lo, eles podem deixar de funcionar.
+### Names
+The `parse_label` method uses the special prefix attributes, so if you change it, they may stop working.
 
-Exemplo:
+Example:
 
 ```python
 from envclass import EnvClass
@@ -259,10 +255,10 @@ api = Api()
 api.api_key
 ```
 
-### Atributos
-O método `parse_label` é usado no `parse_attrib`, portanto, não será chamado se você sobrescrevê-lo.
+### Attributes
+The `parse_label` method is used in `parse_attrib`, so it will not be called if you override it.
 
-Exemplo:
+Example:
 
 ```python
 from envclass import EnvClass
@@ -280,18 +276,16 @@ class LowerEnv(EnvClass):
 class Env(LowerEnv):
     api_key: str
 
-env =
-
- Env()
+env = Env()
 
 # >>> getenv('api_key')
 env.api_key
 ```
 
-### Leitura
-O método `parse_env` realiza a leitura do arquivo `.env` e define as variáveis com `os.environ`. Se preferir, pode usar uma biblioteca, como `python-dotenv`, para realizar essa ação.
+### Reading
+The `parse_env` method reads the `.env` file and defines the variables with `os.environ`. If you prefer, you can use a library like `python-dotenv` to perform this action.
 
-Exemplo:
+Example:
 
 ```python
 from dotenv import load_env
@@ -304,7 +298,7 @@ class DotClass(EnvClass):
 class Service(DotClass):
     host: str = 'localhost'
 
-# Por padrão, executa o parse_env
+# By default, it runs the parse_env
 service = Service()
 
 # >>> os.environ.get('HOST', 'localhost')
