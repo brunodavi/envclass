@@ -1,6 +1,6 @@
 [project]
 name = "envclass"
-version = "0.1.0"
+version = "0.1.1"
 description = "Uma classe Python projetada para simplificar o gerenciamento de variáveis de ambiente"
 authors = [
     {name = "brunodavi", email = "48166556+brunodavi@users.noreply.github.com"},
