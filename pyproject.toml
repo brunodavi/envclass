@@ -1,18 +1,52 @@
 [project]
 name = "envclass"
-version = "0.2.0"
-description = "Uma classe Python projetada para simplificar o gerenciamento de variáveis de ambiente em seus aplicativos, reduzindo a repetição de código."
+version = "0.1.0"
+description = "Uma classe Python projetada para simplificar o gerenciamento de variáveis de ambiente"
 authors = [
-    {name = "brunodavi",email = "brunodaviandrade2000@gmail.com"},
+    {name = "brunodavi", email = "48166556+brunodavi@users.noreply.github.com"},
 ]
 
 dependencies = []
 
-requires-python = ">=3.10"
-readme = "README.md"
+requires-python = ">=3.7"
+readme = "docs/README-EN.md"
 license = {text = "GNU General Public License v3.0"}
 
 
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+
+    "Operating System :: OS Independent",
+
+    "Environment :: Web Environment",
+    "Environment :: Console",
+
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
+
+    "Natural Language :: English",
+    "Natural Language :: Portuguese (Brazilian)",
+
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+Repository = "https://github.com/brunodavi/envclass"
+Issues = "https://github.com/brunodavi/envclass/issues"
+
+
 [tool.pdm.scripts]
-start = 'pdm run ./src/envclass/envclass.py'
-test = 'python -m unittest'
+start = "pdm run ./src/envclass/envclass.py"
+test = "python -m unittest"
