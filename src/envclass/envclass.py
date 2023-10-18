@@ -55,7 +55,7 @@ class EnvClass:
             with open(env_file, encoding='utf-8') as stream:
                 env_content = stream.read()
                 env_list = re.findall(
-                    r'^([A-Za-z]\w+)=(\w*)',
+                    r'^([A-Za-z]\w*)=(\w*)',
                     env_content,
                     re.MULTILINE,
                 )
