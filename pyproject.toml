@@ -1,7 +1,7 @@
 [project]
 name = "envclass"
-version = "0.1.2"
-description = "A Python class that simplifies the management of environment variables in your applications, eliminating the need for code repetition."
+version = "1.0.0"
+description = "Manage environment variables in a simple and elegant way"
 authors = [
     {name = "brunodavi", email = "48166556+brunodavi@users.noreply.github.com"},
 ]
