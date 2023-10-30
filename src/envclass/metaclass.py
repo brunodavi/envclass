@@ -1,5 +1,7 @@
 import os, re
 
+from typing import get_type_hints
+
 
 class MetaClass(type):
     _strict = True
@@ -33,11 +35,9 @@ class MetaClass(type):
 
     def _init_attrs(cls):
         cls.__read_only = False
+        hints = get_type_hints(cls)
 
-        attributes = cls.__annotations__
-        attributes_items = attributes.items()
-
-        for label, attrib in attributes_items:
+        for label, attrib in hints.items():
             default = getattr(cls, label, None)
 
             [key, value] = cls.parse_attrib(
