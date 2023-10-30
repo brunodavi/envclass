@@ -19,14 +19,14 @@ with termux)
 
 
 ### Installation
-```basn
+```sh
 pip install envclass
 ```
 
 ### Quick Start
 
 `.env`
-```bash
+```env
 HOST=0.0.0.0
 PORT=1234
 
@@ -50,7 +50,7 @@ class MyEnv(EnvClass):
     CONFIG_FILE: str
 
 
-# Return: 0.0.0.0
+# Return: '0.0.0.0'
 MyEnv.HOST
 
 # Return: False
@@ -110,6 +110,52 @@ would look better
 
 Since the name is closest to the environment variable read
 
+Example:
+
+`.env`
+```env
+LOWER_KEY='lower'
+```
+
+```python
+from envclass import EnvClass
+
+class EnvLower(EnvClass):
+    lower_key = 'upper'
+
+# Return: 'lower'
+EnvLower.lower_key
+```
+
+### See your variables
+
+The class is seen this way:
+
+`env`
+```env
+ENV_A=3
+ENV_B=1
+ENV_C=10
+```
+
+```python
+from envclass import EnvClass
+
+class Env(EnvClass):
+    _prefix = 'ENV'
+
+    A: str
+    B: bool = False
+    C: int
+
+print(Env)
+
+## OutPut:
+# ENV_A='3'
+# ENV_B=True
+# ENV_C=10
+```
+
 
 ### Special Attributes
 
@@ -136,7 +182,7 @@ print(NoEnv.WAIT_TIME)
 
 Execution on Linux:
 
-```bash
+```sh
 $ WAIT_TIME=5 python no_load_env.py
 5
 ```
@@ -182,7 +228,7 @@ making it easier to organize.
 Example:
 
 `.env`
-```bash
+```env
 DB_USER=dev_user
 DB_KEY=dev_key_123
 ```
