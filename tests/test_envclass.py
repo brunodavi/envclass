@@ -3,12 +3,14 @@ import os, sys, io
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
+from pathlib import Path
+
 from envclass import EnvClass
 
 
 class TestEnvClassFeatures(TestCase):
     @patch.dict(os.environ, {'A': 'False', 'B': 'True', 'C': '3'})
-    def test_attribute_as_env_representation(self):
+    def test_env_representation(self):
         class Repl(EnvClass):
             A: str
             B: bool
@@ -29,6 +31,15 @@ class TestEnvClassFeatures(TestCase):
             self.assertEqual(output, env_repl_expected)
         finally:
             sys.stdout = saved_stdout
+
+    @patch.dict(os.environ, {'A': 'True', 'B': 'False', 'C': '5'})
+    def test_repl_is_not_str(self):
+        class Repl(EnvClass):
+            A: str
+            B: bool
+            C: int
+
+        self.assertNotIsInstance(Repl, str)
 
     @patch.dict(os.environ, {'READ_ONLY': 'True'})
     def test_attribute_is_read_only(self):
@@ -58,6 +69,31 @@ class TestEnvClassFeatures(TestCase):
 
         self.assertEqual(DataBase.CONNECTION, 'ok')
 
+    def test_attribute_strict_false(self):
+        class MyEnv(EnvClass):
+            _strict = False
+
+            ATTRIBUTE_NOT_EXISTS: bool
+
+        self.assertEqual(MyEnv.ATTRIBUTE_NOT_EXISTS, None)
+
+    def test_attribute_strict_true(self):
+        with self.assertRaises(KeyError):
+            class MyEnv(EnvClass):
+                ATTRIBUTE_NOT_EXISTS: bool
+
+    def test_attribute_default(self):
+        class MyEnv(EnvClass):
+            DEFAULT_STR: str = 'env_test' 
+            DEFAULT_INT: int = 1 
+            DEFAULT_FLOAT: float = 1.5 
+            DEFAULT_BOOL: bool = True
+
+        self.assertEqual(MyEnv.DEFAULT_STR, 'env_test')
+        self.assertEqual(MyEnv.DEFAULT_INT, 1)
+        self.assertEqual(MyEnv.DEFAULT_FLOAT, 1.5)
+        self.assertEqual(MyEnv.DEFAULT_BOOL, True)
+
     def test_load_env_file(self):
         env_content = '\n'.join((
             'TESTING=true',
@@ -68,8 +104,7 @@ class TestEnvClassFeatures(TestCase):
             'NONE='
         ))
 
-        with open('.env', 'w') as dotenv:
-            dotenv.write(env_content)
+        Path('.env').write_text(env_content)
 
         class LoadEnv(EnvClass):
             _env_file = '.env'
@@ -95,30 +130,23 @@ class TestEnvClassFeatures(TestCase):
 
         mock_open.assert_not_called()
 
-    def test_attribute_strict_false(self):
-        class MyEnv(EnvClass):
-            _strict = False
+    def test_env_invalid_file(self):
+        with self.assertRaises(Exception):
+            class EnvFileNotExists(EnvClass):
+                _env_file = '.env_error'
 
-            ATTRIBUTE_NOT_EXISTS: bool
+                A: int
 
-        self.assertEqual(MyEnv.ATTRIBUTE_NOT_EXISTS, None)
+    @patch.dict(os.environ, {'A': '1'})
+    def test_env_priority(self):
+        Path('.env').write_text('A=2')
 
-    def test_attribute_strict_true(self):
-        with self.assertRaises(KeyError):
-            class MyEnv(EnvClass):
-                ATTRIBUTE_NOT_EXISTS: bool
+        class Repl(EnvClass):
+            _env_file = '.env'
 
-    def test_attribute_default(self):
-        class MyEnv(EnvClass):
-            DEFAULT_STR: str = 'env_test' 
-            DEFAULT_INT: int = 1 
-            DEFAULT_FLOAT: float = 1.5 
-            DEFAULT_BOOL: bool = True
+            A: int
 
-        self.assertEqual(MyEnv.DEFAULT_STR, 'env_test')
-        self.assertEqual(MyEnv.DEFAULT_INT, 1)
-        self.assertEqual(MyEnv.DEFAULT_FLOAT, 1.5)
-        self.assertEqual(MyEnv.DEFAULT_BOOL, True)
+        self.assertEqual(Repl.A, 1)
 
 
 class TestEnvClassTypes(TestCase):
