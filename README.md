@@ -3,7 +3,7 @@
 [![python_versions][BadgePyVersions]][PYPI]
 [![gnu][BadgeGNU]][PYPI]
 [![version][BadgeVersion]][PYPI]
-[![testing][BadgeTest]][CI]
+[![testing][BadgePipeline]][CI]
 
 
 Manage environment variables in a simple and elegant way
@@ -263,9 +263,9 @@ DataBase.KEY
 
 
 [PYPI]: https://pypi.python.org/pypi/envclass
-[CI]: https://github.com/brunodavi/envclass/actions/workflows/python-test.yml
+[CI]: https://github.com/brunodavi/envclass/actions/workflows/pipeline.yml
 
 [BadgeGNU]: https://img.shields.io/pypi/l/envclass.svg
 [BadgeVersion]: https://img.shields.io/pypi/v/envclass.svg
 [BadgePyVersions]: https://img.shields.io/pypi/pyversions/envclass.svg
-[BadgeTest]: https://github.com/brunodavi/envclass/actions/workflows/python-test.yml/badge.svg
+[BadgePipeline]: https://github.com/brunodavi/envclass/actions/workflows/pipeline.yml/badge.svg
