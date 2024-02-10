@@ -1,6 +1,7 @@
 import os, re
 
 from typing import get_type_hints
+from pathlib import Path
 
 
 class MetaClass(type):
@@ -59,17 +60,15 @@ class MetaClass(type):
 
 
     def parse_env(cls, env_file: str):
-        if os.path.isfile(env_file):
-            with open(env_file, encoding='utf-8') as stream:
-                env_content = stream.read()
-                env_list = re.findall(
-                    r'^([A-Za-z]\w*)=(\w*)',
-                    env_content,
-                    re.MULTILINE,
-                )
+        env_list = re.findall(
+            r'^([A-Za-z]\w*)=(\w*)',
+            Path(env_file).read_text(encoding='utf-8'),
+            re.MULTILINE,
+        )
 
-                for name, value in env_list:
-                    os.environ[name] = value
+        for name, value in env_list:
+            if not os.environ.get(name):
+                os.environ[name] = value
 
     def parse_label(cls, label: str):
         prefix = ''
