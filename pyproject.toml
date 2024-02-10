@@ -1,6 +1,6 @@
 [project]
 name = "envclass"
-version = "1.0.0"
+version = "1.1.0"
 description = "Manage environment variables in a simple and elegant way"
 authors = [
     {name = "brunodavi", email = "48166556+brunodavi@users.noreply.github.com"},
@@ -50,5 +50,3 @@ Issues = "https://github.com/brunodavi/envclass/issues"
 [tool.pdm.scripts]
 start = "pdm run ./src/envclass/envclass.py"
 test = "python -m unittest"
-
-publish = "pdm publish --username __token__ --password $PYPI_ENVCLASS_KEY"

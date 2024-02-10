@@ -1,3 +1,7 @@
+## v1.1.0
+1. Style code
+2. Improve security
+
 ## v1.0.0
 1. Code refactoring
 2. Usage of MetaClass to avoid class instantiation
