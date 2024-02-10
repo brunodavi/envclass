@@ -18,6 +18,9 @@ way that works for any device (like a cell phone
 with termux)
 
 
+> If you intend to run in production, use [pydantic-settings](https://pypi.org/project/pydantic-settings)
+
+
 ### Installation
 ```sh
 pip install envclass
@@ -121,6 +124,7 @@ LOWER_KEY='lower'
 from envclass import EnvClass
 
 class EnvLower(EnvClass):
+    _env_file = '.env'
     lower_key = 'upper'
 
 # Return: 'lower'
@@ -131,7 +135,7 @@ EnvLower.lower_key
 
 The class is seen this way:
 
-`env`
+`.env`
 ```env
 ENV_A=3
 ENV_B=1
@@ -142,6 +146,7 @@ ENV_C=10
 from envclass import EnvClass
 
 class Env(EnvClass):
+    _env_file = '.env'
     _prefix = 'ENV'
 
     A: str
@@ -149,11 +154,14 @@ class Env(EnvClass):
     C: int
 
 print(Env)
+```
 
-## OutPut:
-# ENV_A='3'
-# ENV_B=True
-# ENV_C=10
+Output:
+
+```env
+ENV_A='3'
+ENV_B=True
+ENV_C=10
 ```
 
 
@@ -237,6 +245,7 @@ DB_KEY=dev_key_123
 from envclass import EnvClass
 
 class DataBase(EnvClass):
+    _env_file = '.env'
     _prefix = 'DB'
 
     NAME: str = 'Dev'
