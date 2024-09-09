@@ -8,8 +8,6 @@
 
 Manage environment variables in a simple and elegant way
 
-Made from 100% pure Python
-
 
 ## Why does this exist
 
